@@ -7,12 +7,12 @@
 #define USER_LED 13
 
 #define CHANNELS 4
-#define CHANNEL_1_LED 4
-#define CHANNEL_1_PWM 5
-#define CHANNEL_2_LED 4
-#define CHANNEL_2_PWM 5
-#define CHANNEL_3_LED 4
-#define CHANNEL_3_PWM 5
+#define CHANNEL_1_LED A5
+#define CHANNEL_1_PWM A5
+#define CHANNEL_2_LED A5
+#define CHANNEL_2_PWM A5
+#define CHANNEL_3_LED A5
+#define CHANNEL_3_PWM A5
 #define CHANNEL_4_LED 4
 #define CHANNEL_4_PWM 5
 
@@ -29,7 +29,7 @@ channel_type channel_pins[CHANNELS] = {CHANNEL_1_PWM, CHANNEL_1_LED,
 channel_type channel_state[CHANNELS] = {255, 0,
                                         255, 0,
                                         255, 0,
-                                        255, 0};
+                                        16, 0};
 
 #define ROT_KNOB_RED    A7
 #define ROT_KNOB_GREEN  A6
@@ -47,6 +47,8 @@ char user_led_state;
 
 void setup()
 {
+  Serial.begin(9600);
+  
   int i;
   for (int i = 0; i < CHANNELS; i++)
   {
@@ -60,9 +62,10 @@ void setup()
   pinMode(ROT_KNOB_B, INPUT_PULLUP);
   
   schedule.addTask(blink_channel_led, 250);
-  schedule.addTask(update_led_pwm, 125);
+  schedule.addTask(update_led_pwm, 131);
   //schedule.addTask(blink_user_led, 20);
   schedule.addTask(button_check, 100);
+  schedule.addTask(stats_task, 2000);
 
   knob = RotaryKnobDecoder(ROT_KNOB_A, ROT_KNOB_B);
   
@@ -101,6 +104,7 @@ void blink_channel_led()
 
 void update_led_pwm()
 {
+  
   int i;
   for (i = 0; i < CHANNELS; i++)
   {
@@ -140,5 +144,14 @@ void rot_knob()
   {
     channel_state[active_channel].pwm--;
   }
+
+}
+
+
+void stats_task()
+{
+  Serial.print((int)active_channel);
+  Serial.print(" : ");
+  Serial.println((int)channel_state[active_channel].pwm);
 
 }
