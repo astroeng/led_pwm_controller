@@ -58,7 +58,7 @@ void setup()
   pinMode(USER_LED, OUTPUT);
   
   schedule.addTask(blink_channel_led, 250);
-  schedule.addTask(update_led_pwm, 125);
+  schedule.addTask(update_led_pwm, 10);
   schedule.addTask(button_check, 100);
   //schedule.addTask(stats_task, 2000);
   
@@ -68,6 +68,10 @@ void setup()
 
   attachInterrupt(0, rot_knob, CHANGE);
   attachInterrupt(1, rot_knob, CHANGE);
+  
+  //TCCR0B = (TCCR0B & 0xF8) | 0x04;
+  //TCCR1B = (TCCR1B & 0xF8) | 0x04;
+  //TCCR2B = (TCCR2B & 0xF8) | 0x04;
 }
 
 /* Run the Ardiono loop function.
